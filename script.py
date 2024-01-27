@@ -43,13 +43,14 @@ def L(culling_rate: float) -> np.ndarray:
     # find the maximum real part of the eigenvalues w
     eigen_value = max(w.tolist(), key=lambda x: abs(x))
     print(f"For culling rate {culling_rate}, eigenvalue is {eigen_value}")
+    # print(w, "vectors", v)
     eigen_value = abs(eigen_value)
     # eigen_values.append((culling_rate, eigen_value))
 
     return ret
 
 
-def average_growth_of(L: np.array, N=50) -> float:
+def average_growth_of(L: np.array, N=20) -> float:
     # apply leslie matrix to initial and sum,
     # record the average growth rate
     # print(f"{L=}")
@@ -64,6 +65,8 @@ def average_growth_of(L: np.array, N=50) -> float:
     differences = []
     for i in range(1, N):
         differences.append(values[i] / values[i - 1])
+
+    print(f"Values: {values}")
 
     return np.mean(differences)
 
