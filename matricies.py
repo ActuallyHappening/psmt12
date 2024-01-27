@@ -17,6 +17,8 @@ birth_rates = np.array(cells((1, 4), (8, 4)), dtype=np.single)[0]
 survival_rates = np.array(cells((1, 21), (7, 21)), dtype=np.single)[0]
 # print(f"{birth_rates=}, {survival_rates=}")
 
+eigen_values = []
+
 
 def L(culling_rate: float) -> np.ndarray:
     culling_rate = float(culling_rate)
@@ -38,8 +40,10 @@ def L(culling_rate: float) -> np.ndarray:
     )
 
     w, v = eig(ret)
-    eigen_value = max(w.tolist())
+    # find the maximum real part of the eigenvalues w
+    eigen_value = max(w.tolist(), key=lambda x: x.real)
     print(f"For culling rate {culling_rate}, eigenvalue is {eigen_value}")
+    eigen_values.append((culling_rate, eigen_value))
 
     return ret
 
@@ -61,4 +65,8 @@ for c in range(culls):
 
 ret = ret.tolist()
 # print(f"{ret=}")
-ret
+
+print(f"{eigen_values=}")
+
+# ret
+eigen_values
