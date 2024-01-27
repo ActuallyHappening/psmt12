@@ -43,6 +43,9 @@ def L(culling_rate: float) -> np.ndarray:
     # find the maximum real part of the eigenvalues w
     eigen_value = max(w.tolist(), key=lambda x: x.real)
     print(f"For culling rate {culling_rate}, eigenvalue is {eigen_value}")
+    if eigen_value.imag != 0:
+        print(f"Warning: eigenvalue has imaginary part {eigen_value.imag}")
+    eigen_value = abs(eigen_value)
     eigen_values.append((culling_rate, eigen_value))
 
     return ret
@@ -55,10 +58,16 @@ for c in range(culls):
     L_culled = L(cull_factor)
     # print(f"{L_culled=}")
     for n in range(num):
+        debug = False
+        # if n <= 1:
+        #     debug = True
+
         L_n = linalg.matrix_power(L_culled, n)
-        # print(f"{L_n=}, {i=}")
+        if debug:
+            print(f"{L_n=}, {i=}")
         population_vector = np.matmul(L_n, i)
-        # print(f"Population vector: {population_vector}")
+        if debug:
+            print(f"Population vector: {population_vector}")
         Sum = np.sum(population_vector)
         # print(f"Sum: {Sum}")
         ret[c][n] = Sum
