@@ -1,106 +1,56 @@
-import numpy as np
 import numpy.linalg as linalg
-import json
+import numpy as np
 import pandas as pd
 
-# 0.59, 0.49, 0.37, 0.24, 0.12, 0.05, 0.01, 0
-L = np.array(
-    [
-        [
-            0,
-            2.37,
-            3.15,
-            2.23,
-            1.3,
-            0,
-            0,
-            0,
-        ],
-        [
-            0.59,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        ],
-        [
-            0,
-            0.49,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        ],
-        [
-            0,
-            0,
-            0.37,
-            0,
-            0,
-            0,
-            0,
-            0,
-        ],
-        [
-            0,
-            0,
-            0,
-            0.24,
-            0,
-            0,
-            0,
-            0,
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            0.12,
-            0,
-            0,
-            0,
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0.05,
-            0,
-            0,
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0.01,
-            0,
-        ],
-    ]
-)
-i = np.array([105000, 155000, 101000, 34000, 48350, 30650, 21000, 5000])
-# L^n * i for values of n from 1 to 10
-X_n = [np.matmul(linalg.matrix_power(L, n), i) for n in range(1, 11)]
+num = int(cell(10, 1))
+print(f"{num=}")
 
-data = {
-    "n": list(range(1, 11)),
-    "X_n": X_n,
-}
+culls = int(cell(11, 1))
+cull_n = np.array(cells((3, 12), (3, 12 + culls)), dtype=np.single)
 
-# Create a DataFrame
-df = pd.DataFrame(data)
+i = np.array(cells((1, 12), (1, 19)), dtype=np.single)
+# L = np.array(cells((1, 4), (8, 11)), dtype=np.single)
 
-# Export the DataFrame to an Excel file
-df.to_excel("output.xlsx", index=False)
+birth_rates = np.array(cells((1, 4), (8, 4)), dtype=np.single)[0]
+survival_rates = np.array(cells((1, 21), (7, 21)), dtype=np.single)[0]
+print(f"{birth_rates=}, {survival_rates=}")
 
-print(data, linalg.matrix_power(L, 3))
+
+def L(culling_rate: float) -> np.ndarray:
+    culling_rate = float(culling_rate)
+    b = birth_rates
+    assert culling_rate >= 0 and culling_rate <= 1
+    s = survival_rates * (1 - culling_rate)
+    # 8x8 leslie matrix
+    return np.array(
+        [
+            [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]],
+            [s[0], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, s[1], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, s[2], 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, s[3], 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, s[4], 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, s[5], 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, s[6], 0.0],
+        ]
+    )
+
+
+ret = np.zeros((culls, num))
+for c in range(culls):
+    # taking into account culling
+    cull_factor = cull_n[c][0]
+    L_culled = L(cull_factor)
+    print(f"{L_culled=}")
+    for n in range(num):
+        L_n = linalg.matrix_power(L_culled, n)
+        print(f"{L_n=}, {i=}")
+        population_vector = np.matmul(L_n, i)
+        print(f"Population vector: {population_vector}")
+        Sum = np.sum(population_vector)
+        print(f"Sum: {Sum}")
+        ret[c][n] = Sum
+
+ret = ret.tolist()
+print(f"{ret=}")
+ret
