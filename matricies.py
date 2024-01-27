@@ -6,7 +6,8 @@ num = int(cell(10, 1))
 print(f"{num=}")
 
 culls = int(cell(11, 1))
-cull_n = np.array(cells((3, 12), (3, 12 + culls)), dtype=np.single)
+cull_n = np.array(cells((10, 3), (10, 2 + culls)), dtype=np.single)
+print(f"{cull_n=}, {culls=}")
 
 i = np.array(cells((1, 12), (1, 19)), dtype=np.single)
 # L = np.array(cells((1, 4), (8, 11)), dtype=np.single)
