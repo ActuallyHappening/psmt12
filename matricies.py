@@ -41,7 +41,7 @@ def L(culling_rate: float) -> np.ndarray:
 
     w, v = eig(ret)
     # find the maximum real part of the eigenvalues w
-    eigen_value = max(w.tolist(), key=lambda x: x.real)
+    eigen_value = max(w.tolist(), key=lambda x: abs(x))
     print(f"For culling rate {culling_rate}, eigenvalue is {eigen_value}")
     if eigen_value.imag != 0:
         print(f"Warning: eigenvalue has imaginary part {eigen_value.imag}")
