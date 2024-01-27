@@ -71,5 +71,12 @@ def average_growth_of(L: np.array, N=20) -> float:
     return np.mean(differences)
 
 
-mean = average_growth_of(L(0))
-print(f"{mean=}")
+# mean = average_growth_of(L(0))
+# print(f"{mean=}")
+
+num = int(cell(10, 1))
+# print(f"{num=}")
+
+culls = int(cell(11, 1))
+cull_n = np.array(cells((10, 3), (10, 2 + culls)), dtype=np.single)
+# print(f"{cull_n=}, {culls=}")

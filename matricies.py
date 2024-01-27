@@ -10,14 +10,37 @@ culls = int(cell(11, 1))
 cull_n = np.array(cells((10, 3), (10, 2 + culls)), dtype=np.single)
 # print(f"{cull_n=}, {culls=}")
 
-i = np.array(cells((1, 12), (1, 19)), dtype=np.single)
+initial = np.array(cells((1, 12), (1, 19)), dtype=np.single)
 # L = np.array(cells((1, 4), (8, 11)), dtype=np.single)
 
 birth_rates = np.array(cells((1, 4), (8, 4)), dtype=np.single)[0]
 survival_rates = np.array(cells((1, 21), (7, 21)), dtype=np.single)[0]
 # print(f"{birth_rates=}, {survival_rates=}")
 
+growth_iters = int(cell(0, 25))
+
 eigen_values = []
+
+
+def average_growth_of(L: np.array, N) -> float:
+    # apply leslie matrix to initial and sum,
+    # record the average growth rate
+    # print(f"{L=}")
+    # print(f"{initial=}")
+    values = []
+    for i in range(N):
+        L_n = linalg.matrix_power(L, i)
+        P_n = np.matmul(L_n, initial)
+        sum = np.sum(P_n)
+        values.append(sum)
+
+    differences = []
+    for i in range(1, N):
+        differences.append(values[i] / values[i - 1])
+
+    # print(f"Values: {values}")
+
+    return np.mean(differences)
 
 
 def L(culling_rate: float) -> np.ndarray:
@@ -46,7 +69,10 @@ def L(culling_rate: float) -> np.ndarray:
     if eigen_value.imag != 0:
         print(f"Warning: eigenvalue has imaginary part {eigen_value.imag}")
     eigen_value = abs(eigen_value)
-    eigen_values.append((culling_rate, eigen_value))
+
+    growth_rate = average_growth_of(ret, growth_iters)
+
+    eigen_values.append((culling_rate, eigen_value, growth_rate))
 
     return ret
 
@@ -64,8 +90,8 @@ for c in range(culls):
 
         L_n = linalg.matrix_power(L_culled, n)
         if debug:
-            print(f"{L_n=}, {i=}")
-        population_vector = np.matmul(L_n, i)
+            print(f"{L_n=}, {initial=}")
+        population_vector = np.matmul(L_n, initial)
         if debug:
             print(f"Population vector: {population_vector}")
         Sum = np.sum(population_vector)
