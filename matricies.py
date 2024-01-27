@@ -90,9 +90,12 @@ L = np.array(
 )
 i = np.array([105000, 155000, 101000, 34000, 48350, 30650, 21000, 5000])
 # L^n * i for values of n from 1 to 10
-X_n = [np.dot(linalg.matrix_power(L, n), i) for n in range(1, 11)]
+X_n = [np.matmul(linalg.matrix_power(L, n), i) for n in range(1, 11)]
 
-data = res
+data = {
+    "n": list(range(1, 11)),
+    "X_n": X_n,
+}
 
 # Create a DataFrame
 df = pd.DataFrame(data)
@@ -100,4 +103,4 @@ df = pd.DataFrame(data)
 # Export the DataFrame to an Excel file
 df.to_excel("output.xlsx", index=False)
 
-print(res, linalg.matrix_power(L, 3))
+print(data, linalg.matrix_power(L, 3))
