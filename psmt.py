@@ -20,7 +20,7 @@ survival_rates = np.array([0.59, 0.49, 0.37, 0.24, 0.12, 0.05, 0.01])
 
 
 def average_growth_of(L: np.array, N, eradication=0) -> float:
-    values = get_ps_n(L, N=N, eradication=eradication)
+    values = get_ps_n(L=L, N=N, eradication=eradication)
 
     differences = []
     for i in range(1, N):
@@ -66,7 +66,7 @@ def get_p_n(L, N=20, eradication=0) -> float:
     return np.sum(P_n) * e
 
 
-def get_ps_n(L, N=20, eradication=0):
+def get_ps_n(L, N=20, eradication: float = 0.0):
     """0 - 20, len() == 21"""
     assert eradication >= 0 and eradication <= 1
     ret = []
@@ -98,10 +98,6 @@ def find_optimal_cull(
     return None
 
 
-optimal_cull = find_optimal_cull()
-print(f"{optimal_cull=}")
-
-
 def find_optimal_eradication(
     target_population: float = 50,
     N=20,
@@ -113,8 +109,8 @@ def find_optimal_eradication(
     eradication_rates = np.arange(0, 1, 0.0001)
     # print(f"{culls=}")
     for e in eradication_rates:
-        L_modified = L(e, survival_rates=survival_rates, birth_rates=birth_rates)
-        P_n = get_p_n(L_modified, N=N, eradication=e)
+        L_modified = L(survival_rates=survival_rates, birth_rates=birth_rates)
+        P_n = get_p_n(L=L_modified, N=N, eradication=e)
         if P_n < target_population:
             print(f"Optimal eradication results: {P_n=}, {e=}")
             return e
@@ -129,18 +125,22 @@ def find_stable_eradication(
 ) -> float:
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the cull rate that got closest to target_population
-    eradication_rates = np.arange(0, 1, 0.0001)
+    eradication_rates = np.arange(0, 1, 0.005)
     # print(f"{culls=}")
     closest_so_far = 1000000
     closest_so_far_e = 0
     for e in eradication_rates:
-        L_modified = L(e, survival_rates=survival_rates, birth_rates=birth_rates)
-        avg_growth = average_growth_of(L=L_modified, N=N)
-        if abs(avg_growth - 1) < closest_so_far:
-            closest_so_far = abs(avg_growth - 1)
+        L_modified = L(survival_rates=survival_rates, birth_rates=birth_rates)
+        avg_growth = average_growth_of(L=L_modified, N=N, eradication=e)
+        distance_from_stable = abs(avg_growth - 1)
+        if distance_from_stable < closest_so_far:
+            closest_so_far = distance_from_stable
             closest_so_far_e = e
         else:
-            print(f"Stable eradication results: {closest_so_far_e=}")
+            avg = average_growth_of(L=L(), N=N, eradication=closest_so_far_e)
+            print(
+                f"Stable eradication results: {closest_so_far_e=} {closest_so_far=} {avg=}"
+            )
             return closest_so_far_e
 
     return None
@@ -175,7 +175,7 @@ def find_stable_birth_control(
 ) -> float:
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the birth control rate that got closest to target_population
-    birth_controls = np.arange(0, 1, 0.001)
+    birth_controls = np.arange(0, 1, 0.005)
     # print(f"{birth_controls=}")
 
     closest_so_far = 1000000
@@ -238,16 +238,17 @@ def write_eradication_rates_to_csv(
     # print(f"{birth_controls=}")
     results = [["-", *map(lambda n: 5 * n, list(range(N + 1)))]]
     for e in eradication_rates:
-        L_modified = L(
-            birth_control=e, survival_rates=survival_rates, birth_rates=birth_rates
-        )
-        Ps_n = get_ps_n(L_modified, N, eradication=e)
+        L_modified = L(survival_rates=survival_rates, birth_rates=birth_rates)
+        Ps_n = get_ps_n(L=L_modified, N=N, eradication=e)
         results.append([e, *Ps_n])
 
     columns = ["Eradication Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
     df = pd.DataFrame(results, columns=columns)
     df.to_csv(file_name, index=False)
 
+
+# optimal_cull = find_optimal_cull()
+# print(f"{optimal_cull=}")
 
 optimal_birth_control = find_optimal_birth_control()
 print(f"{optimal_birth_control=}")
@@ -264,6 +265,7 @@ write_birth_controls_to_csv(
 optimal_eradication = find_optimal_eradication()
 print(f"{optimal_eradication=}")
 write_eradication_rates_to_csv(
+    step=0.01,
     median=optimal_eradication,
     file_name="eradication_rates_optimum.csv",
 )
@@ -271,6 +273,7 @@ write_eradication_rates_to_csv(
 stable_eradication = find_stable_eradication()
 print(f"{stable_eradication=}")
 write_eradication_rates_to_csv(
+    step=0.01,
     median=stable_eradication,
     file_name="eradication_rates_stable.csv",
 )
