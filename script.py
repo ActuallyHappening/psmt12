@@ -20,9 +20,13 @@ birth_rates = np.array([0, 2.37, 3.15, 2.23, 1.3, 0, 0, 0])
 survival_rates = np.array([0.59, 0.49, 0.37, 0.24, 0.12, 0.05, 0.01])
 
 
-def L(culling_rate: float) -> np.ndarray:
+def L(culling_rate: float, birth_control: float = 0) -> np.ndarray:
     culling_rate = float(culling_rate)
-    b = birth_rates
+
+    # b = birth_rates
+    # take into account birth_control, * (1 - birth_control)
+    b = birth_rates * (1 - birth_control)
+
     assert culling_rate >= 0 and culling_rate <= 1
     s = survival_rates * (1 - culling_rate)
     # 8x8 leslie matrix
@@ -38,14 +42,6 @@ def L(culling_rate: float) -> np.ndarray:
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, s[6], 0.0],
         ]
     )
-
-    w, v = eig(ret)
-    # find the maximum real part of the eigenvalues w
-    eigen_value = max(w.tolist(), key=lambda x: abs(x))
-    print(f"For culling rate {culling_rate}, eigenvalue is {eigen_value}")
-    # print(w, "vectors", v)
-    eigen_value = abs(eigen_value)
-    # eigen_values.append((culling_rate, eigen_value))
 
     return ret
 
@@ -71,12 +67,18 @@ def average_growth_of(L: np.array, N=20) -> float:
     return np.mean(differences)
 
 
-# mean = average_growth_of(L(0))
-# print(f"{mean=}")
+def get_p_n(L, N=20):
+    L_n = linalg.matrix_power(L, N)
+    P_n = np.matmul(L_n, initial)
+    return np.sum(P_n)
 
-num = int(cell(10, 1))
-# print(f"{num=}")
 
-culls = int(cell(11, 1))
-cull_n = np.array(cells((10, 3), (10, 2 + culls)), dtype=np.single)
-# print(f"{cull_n=}, {culls=}")
+# # mean = average_growth_of(L(0))
+# # print(f"{mean=}")
+
+# num = int(cell(10, 1))
+# # print(f"{num=}")
+
+# culls = int(cell(11, 1))
+# cull_n = np.array(cells((10, 3), (10, 2 + culls)), dtype=np.single)
+# # print(f"{cull_n=}, {culls=}")
