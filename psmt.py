@@ -36,10 +36,14 @@ def L(
     survival_rates=survival_rates,
 ) -> np.ndarray:
     culling_rate = float(culling_rate)
+    birth_control = float(birth_control)
     # take into account birth_control, * (1 - birth_control)
     b = birth_rates * (1 - birth_control)
+    # assert birth_rates[1] == 2.37
 
     assert culling_rate >= 0 and culling_rate <= 1
+    assert birth_control >= 0 and birth_control <= 1
+
     s = survival_rates * (1 - culling_rate)
     # 8x8 leslie matrix
     ret = np.array(
@@ -171,26 +175,22 @@ def find_optimal_birth_control(
 def find_stable_birth_control(
     N=500,
     survival_rates=survival_rates,
-    birth_rates=birth_rates,
+    birth_controls=birth_rates,
 ) -> float:
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the cull rate that got closest to target_population
-    birth_rates = np.arange(0, 1, 0.005)
+    birth_controls = np.arange(0, 1, 0.005)
     # print(f"{culls=}")
-    closest_so_far = 1000000
-    closest_so_far_b = 0
+    closest_so_far = 1000000.0
+    closest_so_far_b = 0.0
 
-    for b in birth_rates:
+    for b in birth_controls:
         L_modified = L(
             birth_control=b, survival_rates=survival_rates, birth_rates=birth_rates
         )
         avg_growth = average_growth_of(L=L_modified, N=N)
 
         distance_from_stable = abs(avg_growth - 1)
-
-        print(
-            f"Average growth: {b=}, {avg_growth=}, {distance_from_stable=}, {distance_from_stable<closest_so_far=}"
-        )
 
         if distance_from_stable < closest_so_far:
             closest_so_far = distance_from_stable
@@ -222,7 +222,7 @@ def write_birth_controls_to_csv(
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ):
-    birth_controls = np.arange(median - deviation, median + deviation, step)
+    birth_controls = np.arange(max(median - deviation, 0), median + deviation, step)
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the birth control rate that got closest to target_population
     # print(f"{birth_controls=}")
@@ -267,21 +267,21 @@ def write_eradication_rates_to_csv(
 # optimal_cull = find_optimal_cull()
 # print(f"{optimal_cull=}")
 
-# optimal_eradication = find_optimal_eradication()
-# print(f"{optimal_eradication=}")
-# write_eradication_rates_to_csv(
-#     step=0.01,
-#     median=optimal_eradication,
-#     file_name="eradication_rates_optimum.csv",
-# )
+optimal_eradication = find_optimal_eradication()
+print(f"{optimal_eradication=}")
+write_eradication_rates_to_csv(
+    step=0.01,
+    median=optimal_eradication,
+    file_name="eradication_rates_optimum.csv",
+)
 
-# stable_eradication = find_stable_eradication()
-# print(f"{stable_eradication=}")
-# write_eradication_rates_to_csv(
-#     step=0.01,
-#     median=stable_eradication,
-#     file_name="eradication_rates_stable.csv",
-# )
+stable_eradication = find_stable_eradication()
+print(f"{stable_eradication=}")
+write_eradication_rates_to_csv(
+    step=0.01,
+    median=stable_eradication,
+    file_name="eradication_rates_stable.csv",
+)
 
 optimal_birth_control = find_optimal_birth_control()
 print(f"{optimal_birth_control=}")
@@ -294,5 +294,3 @@ print(f"{stable_birth_control=}")
 write_birth_controls_to_csv(
     file_name="birth_controls_stable.csv", median=stable_birth_control
 )
-
-print(f"{average_growth_of(L=L(birth_control=0), N=500)=}")
