@@ -71,6 +71,18 @@ def get_p_n(L, N=20, eradication=0) -> float:
     return np.sum(P_n) * e
 
 
+def get_ps_n(L, N=20, eradication=0):
+    """0 - 20, len() == 21"""
+    assert eradication >= 0 and eradication <= 1
+    ret = []
+    for i in range(N + 1):
+        L_n = linalg.matrix_power(L, i)
+        P_n = np.matmul(L_n, initial)
+        e = (1 - eradication) ** i
+        ret.append(np.sum(P_n) * e)
+    return ret
+
+
 def find_optimal_cull(
     target_population: float = 50,
     N=20,
@@ -129,15 +141,16 @@ def write_birth_controls_to_csv(
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the birth control rate that got closest to target_population
     # print(f"{birth_controls=}")
-    results = []
+    results = [["-", *map(lambda n: 5 * n, list(range(N + 1)))]]
     for b in birth_controls:
         L_modified = L(
             birth_control=b, survival_rates=survival_rates, birth_rates=birth_rates
         )
-        P_n = get_p_n(L_modified, N)
-        results.append([b, P_n, 69])
+        Ps_n = get_ps_n(L_modified, N)
+        results.append([b, *Ps_n])
 
-    df = pd.DataFrame(results)
+    columns = ["Birth Control Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
+    df = pd.DataFrame(results, columns=columns)
     df.to_csv(file_name, index=False)
 
 
