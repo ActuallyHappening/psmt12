@@ -125,7 +125,9 @@ def find_stable_cull(
     closest_so_far_c = 0
     """Cull rate that was tried last"""
     for c in culls:
-        L_culled = L(c, survival_rates=survival_rates, birth_rates=birth_rates)
+        L_culled = L(
+            culling_rate=c, survival_rates=survival_rates, birth_rates=birth_rates
+        )
         avg_growth = average_growth_of(L=L_culled, N=N)
         distance_from_stable = abs(avg_growth - 1)
         if distance_from_stable < closest_so_far:
@@ -142,7 +144,7 @@ def find_stable_cull(
                 ),
                 N=N,
             )
-            result = f"The cull rate that is most stable is {closest_so_far_c} ± {accuracy}. This cull rate had an average growth rate of {avg} and reached {previous_p_n} after {N} iterations = after {N * 5} years."
+            result = f"The cull rate that is most stable is {closest_so_far_c} ± {accuracy}. This cull rate had an average growth rate of {avg} and reached {previous_p_n} thousand after {N} iterations = after {N * 5} years."
             return (result, closest_so_far_c)
 
     return None
@@ -204,7 +206,7 @@ def find_stable_eradication(
                 N=N,
                 eradication=closest_so_far_e,
             )
-            result = f"The eradication rate that is most stable is {closest_so_far_e} ± {accuracy}. This eradication rate had an average growth rate of {avg} and reached {previous_p_n} after {N} iterations = after {N * 5} years."
+            result = f"The eradication rate that is most stable is {closest_so_far_e} ± {accuracy}. This eradication rate had an average growth rate of {avg} and reached {previous_p_n} thousand after {N} iterations = after {N * 5} years."
             return (result, closest_so_far_e)
 
     return None
@@ -277,7 +279,7 @@ def find_stable_birth_control(
                 L=previous_L,
                 N=N,
             )
-            result = f"The birth control rate that is most stable is {closest_so_far_b} ± {accuracy}. This birth control rate had an average growth rate of {avg} and reached {previous_p_n} after {N} iterations = after {N * 5} years."
+            result = f"The birth control rate that is most stable is {closest_so_far_b} ± {accuracy}. This birth control rate had an average growth rate of {avg} and reached {previous_p_n} thousand after {N} iterations = after {N * 5} years."
             return (result, closest_so_far_b)
 
     return None
@@ -376,6 +378,13 @@ print(f"{optimal_cull=}")
 write_cull_rates_to_csv(
     median=optimal_cull[1],
     file_name="cull_rates_optimum.csv",
+)
+
+stable_cull = find_stable_cull()
+print(f"{stable_cull=}")
+write_cull_rates_to_csv(
+    median=stable_cull[1],
+    file_name="cull_rates_stable.csv",
 )
 
 optimal_eradication = find_optimal_eradication()
