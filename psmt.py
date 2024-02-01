@@ -34,7 +34,8 @@ import pandas as pd
 # get number from CLI args
 import sys
 
-dataset_num = int([*sys.argv, 13][1])
+# default is 14
+dataset_num = int([*sys.argv, 14][1])
 print(f"Using data set number: {dataset_num=}")
 
 initial_data = np.array(
@@ -55,7 +56,7 @@ initial_data = np.array(
         [105000, 155000, 101000, 34000, 48350, 30650, 21000, 5000],
     ]
 )
-initial = initial_data[dataset_num] / 1000
+initial = initial_data[dataset_num - 1] / 1000
 
 birth_rates = np.array([0, 2.37, 3.15, 2.23, 1.3, 0, 0, 0])
 survival_rates = np.array([0.59, 0.49, 0.37, 0.24, 0.12, 0.05, 0.01])
@@ -473,4 +474,4 @@ write_birth_controls_to_csv(
     file_name="birth_controls_stable.csv",
 )
 
-write_initial_population_vector_to_csv()
+write_initial_population_vector_to_csv(initial=initial)
