@@ -287,6 +287,7 @@ def find_stable_birth_control(
 
 def write_cull_rates_to_csv(
     *args,
+    text="-",
     median,
     deviation=0.05,
     step=0.01,
@@ -302,7 +303,7 @@ def write_cull_rates_to_csv(
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the cull rate that got closest to target_population
     # print(f"{cull_rates=}")
-    results = [["-", *map(lambda n: 5 * n, list(range(N + 1)))]]
+    results = [[text, *map(lambda n: 5 * n, list(range(N + 1)))]]
     for c in cull_rates:
         L_culled = L(
             culling_rate=c, survival_rates=survival_rates, birth_rates=birth_rates
@@ -317,6 +318,7 @@ def write_cull_rates_to_csv(
 
 def write_birth_controls_to_csv(
     *args,
+    text="-",
     median,
     deviation=0.05,
     step=0.01,
@@ -332,7 +334,7 @@ def write_birth_controls_to_csv(
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the birth control rate that got closest to target_population
     # print(f"{birth_controls=}")
-    results = [["-", *map(lambda n: 5 * n, list(range(N + 1)))]]
+    results = [[text, *map(lambda n: 5 * n, list(range(N + 1)))]]
     for b in birth_controls:
         L_modified = L(
             birth_control=b, survival_rates=survival_rates, birth_rates=birth_rates
@@ -347,6 +349,7 @@ def write_birth_controls_to_csv(
 
 def write_eradication_rates_to_csv(
     *args,
+    text="-",
     median,
     deviation=0.05,
     step=0.01,
@@ -362,7 +365,7 @@ def write_eradication_rates_to_csv(
     # iterate through each, get_p_n, stop if population is less than target_population
     # return the birth control rate that got closest to target_population
     # print(f"{birth_controls=}")
-    results = [["-", *map(lambda n: 5 * n, list(range(N + 1)))]]
+    results = [[text, *map(lambda n: 5 * n, list(range(N + 1)))]]
     for e in eradication_rates:
         L_modified = L(survival_rates=survival_rates, birth_rates=birth_rates)
         Ps_n = get_ps_n(L=L_modified, N=N, eradication=e)
@@ -376,13 +379,13 @@ def write_eradication_rates_to_csv(
 optimal_cull = find_optimal_cull()
 print(f"{optimal_cull=}")
 write_cull_rates_to_csv(
-    median=optimal_cull[1],
-    file_name="cull_rates_optimum.csv",
+    median=optimal_cull[1], file_name="cull_rates_optimum.csv", text=optimal_cull[0]
 )
 
 stable_cull = find_stable_cull()
 print(f"{stable_cull=}")
 write_cull_rates_to_csv(
+    text=stable_cull[0],
     median=stable_cull[1],
     file_name="cull_rates_stable.csv",
 )
@@ -390,6 +393,7 @@ write_cull_rates_to_csv(
 optimal_eradication = find_optimal_eradication()
 print(f"{optimal_eradication=}")
 write_eradication_rates_to_csv(
+    text=optimal_eradication[0],
     median=optimal_eradication[1],
     file_name="eradication_rates_optimum.csv",
 )
@@ -397,6 +401,7 @@ write_eradication_rates_to_csv(
 stable_eradication = find_stable_eradication()
 print(f"{stable_eradication=}")
 write_eradication_rates_to_csv(
+    text=stable_eradication[0],
     median=stable_eradication[1],
     file_name="eradication_rates_stable.csv",
 )
@@ -404,6 +409,7 @@ write_eradication_rates_to_csv(
 optimal_birth_control = find_optimal_birth_control()
 print(f"{optimal_birth_control=}")
 write_birth_controls_to_csv(
+    text=optimal_birth_control[0],
     median=optimal_birth_control[1],
     file_name="birth_controls_optimum.csv",
 )
@@ -411,6 +417,7 @@ write_birth_controls_to_csv(
 stable_birth_control = find_stable_birth_control()
 print(f"{stable_birth_control=}")
 write_birth_controls_to_csv(
+    text=stable_birth_control[0],
     median=stable_birth_control[1],
     file_name="birth_controls_stable.csv",
 )
