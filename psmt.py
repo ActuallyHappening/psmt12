@@ -396,6 +396,14 @@ def write_initial_population_vector_to_csv(
     df.to_csv("initial_population_vector.csv", index=False)
 
 
+# Figure 4
+write_cull_rates_to_csv(
+    median=0,
+    deviation=0,
+    file_name="cull_rates_no_cull.csv",
+    text="No cull",
+)
+
 # Figure 5
 optimal_cull = find_optimal_cull()
 print(f"{optimal_cull=}")
@@ -450,7 +458,9 @@ write_birth_controls_to_csv(
 )
 
 # Figure 11
-write_cull_rates_to_csv(median=1, deviation=0, file_name="max_cull_rates.csv")
+write_cull_rates_to_csv(
+    median=1, deviation=0, file_name="max_cull_rates.csv", text="Max cull"
+)
 write_eradication_rates_to_csv(
-    median=1, deviation=0, file_name="max_eradication_rates.csv"
+    median=1, deviation=0, file_name="max_eradication_rates.csv", text="Max eradication"
 )
