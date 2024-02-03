@@ -177,14 +177,15 @@ def find_stable_cull(
             closest_so_far = distance_from_stable
             closest_so_far_c = c
         else:
-            avg = average_growth_of(L=L(), N=N)
+            previous_l = L(
+                culling_rate=closest_so_far_c,
+                survival_rates=survival_rates,
+                birth_rates=birth_rates,
+            )
+            avg = average_growth_of(L=previous_l, N=N)
             print(f"Stable cull results: {closest_so_far_c=} {closest_so_far=} {avg=}")
             previous_p_n = get_p_n(
-                L=L(
-                    culling_rate=closest_so_far_c,
-                    survival_rates=survival_rates,
-                    birth_rates=birth_rates,
-                ),
+                L=previous_l,
                 N=N,
             )
             result = f"The cull rate that is most stable is {closest_so_far_c} ± {accuracy}. This cull rate had an average growth rate of {avg} and reached {previous_p_n} thousand after {N} iterations = after {N * 5} years."
