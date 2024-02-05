@@ -2,9 +2,30 @@ import numpy.linalg as linalg
 from numpy.linalg import eig
 import numpy as np
 import pandas as pd
-import sys
 
-dataset_num = int([*sys.argv, 14][1])
+QUADRATIC = True
+
+if QUADRATIC:
+    import sys
+
+if QUADRATIC:
+    dataset_num = cell(1, 0)
+else:
+    dataset_num = int([*sys.argv, 14][1])
+
+if QUADRATIC:
+    target_population = cell(1, 1)
+else:
+    target_population = 50
+
+if QUADRATIC:
+    optimal_years = cell(1, 2)
+    optimal_N = optimal_years // 5
+else:
+    optimal_years = 100
+    optimal_N = 20
+
+
 print(f"Using data set number: {dataset_num=}")
 
 initial_data = np.array(
@@ -96,8 +117,8 @@ def get_ps_n(L, N=20, eradication: float = 0.0):
 
 def find_optimal_cull(
     *args,
-    target_population: float = 50,
-    N=20,
+    target_population: float = target_population,
+    N=optimal_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
     accuracy: float = 0.0001,
@@ -158,8 +179,8 @@ def find_stable_cull(
 def find_optimal_eradication(
     *args,
     accuracy=0.0001,
-    target_population: float = 50,
-    N=20,
+    target_population: float = target_population,
+    N=optimal_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ) -> (str, float):
@@ -214,8 +235,8 @@ def find_stable_eradication(
 def find_optimal_birth_control(
     *args,
     accuracy=0.0001,
-    target_population: float = 50,
-    N=20,
+    target_population: float = target_population,
+    N=optimal_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ) -> (str, float):
@@ -303,7 +324,9 @@ def write_cull_rates_to_csv(
 
     columns = ["Cull Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
     df = pd.DataFrame(results, columns=columns)
-    df.to_csv(file_name, index=False)
+    if not QUADRATIC:
+        df.to_csv(file_name, index=False)
+    return df
 
 
 def write_birth_controls_to_csv(
@@ -331,7 +354,9 @@ def write_birth_controls_to_csv(
 
     columns = ["Birth Control Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
     df = pd.DataFrame(results, columns=columns)
-    df.to_csv(file_name, index=False)
+    if not QUADRATIC:
+        df.to_csv(file_name, index=False)
+    return df
 
 
 def write_eradication_rates_to_csv(
@@ -357,7 +382,9 @@ def write_eradication_rates_to_csv(
 
     columns = ["Eradication Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
     df = pd.DataFrame(results, columns=columns)
-    df.to_csv(file_name, index=False)
+    if QUADRATIC:
+        df.to_csv(file_name, index=False)
+    return df
 
 
 def write_initial_population_vector_to_csv(
@@ -368,7 +395,7 @@ def write_initial_population_vector_to_csv(
 
 
 # Figure 4
-write_cull_rates_to_csv(
+cull_rates_no_cull = write_cull_rates_to_csv(
     median=0,
     deviation=0,
     file_name="cull_rates_no_cull.csv",
@@ -378,7 +405,7 @@ write_cull_rates_to_csv(
 # Figure 5
 optimal_cull = find_optimal_cull()
 print(f"{optimal_cull=}")
-write_cull_rates_to_csv(
+cull_rates_optimum = write_cull_rates_to_csv(
     median=optimal_cull[1],
     file_name=f"cull_rates_optimum.csv",
     text=optimal_cull[0],
@@ -386,7 +413,7 @@ write_cull_rates_to_csv(
 # Figure 6
 stable_cull = find_stable_cull()
 print(f"{stable_cull=}")
-write_cull_rates_to_csv(
+cull_rates_stable = write_cull_rates_to_csv(
     text=stable_cull[0],
     median=stable_cull[1],
     file_name="cull_rates_stable.csv",
@@ -433,5 +460,10 @@ write_cull_rates_to_csv(
     median=1, deviation=0, file_name="max_cull_rates.csv", text="Max cull"
 )
 write_eradication_rates_to_csv(
-    median=1, deviation=0, file_name="max_eradication_rates.csv", text="Max eradication"
+    median=1,
+    deviation=0,
+    file_name="max_eradication_rates.csv",
+    text="Max eradication",
 )
+
+cull_rates_optimum
