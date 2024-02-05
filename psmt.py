@@ -422,7 +422,7 @@ cull_rates_stable = write_cull_rates_to_csv(
 # Figure 7
 optimal_eradication = find_optimal_eradication()
 print(f"{optimal_eradication=}")
-write_eradication_rates_to_csv(
+eradication_rates_optimal = write_eradication_rates_to_csv(
     text=optimal_eradication[0],
     median=optimal_eradication[1],
     file_name="eradication_rates_optimum.csv",
@@ -431,7 +431,7 @@ write_eradication_rates_to_csv(
 # Figure 8
 stable_eradication = find_stable_eradication()
 print(f"{stable_eradication=}")
-write_eradication_rates_to_csv(
+eradication_rates_stable = write_eradication_rates_to_csv(
     text=stable_eradication[0],
     median=stable_eradication[1],
     file_name="eradication_rates_stable.csv",
@@ -440,7 +440,7 @@ write_eradication_rates_to_csv(
 # Figure 9
 optimal_birth_control = find_optimal_birth_control()
 print(f"{optimal_birth_control=}")
-write_birth_controls_to_csv(
+birth_control_rates_optimal = write_birth_controls_to_csv(
     text=optimal_birth_control[0],
     median=optimal_birth_control[1],
     file_name="birth_controls_optimum.csv",
@@ -449,7 +449,7 @@ write_birth_controls_to_csv(
 # Figure 10
 stable_birth_control = find_stable_birth_control()
 print(f"{stable_birth_control=}")
-write_birth_controls_to_csv(
+birth_control_rates_stable = write_birth_controls_to_csv(
     text=stable_birth_control[0],
     median=stable_birth_control[1],
     file_name="birth_controls_stable.csv",
