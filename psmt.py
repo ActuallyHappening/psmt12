@@ -5,7 +5,7 @@ import pandas as pd
 
 QUADRATIC = True
 
-if QUADRATIC:
+if not QUADRATIC:
     import sys
 
 if QUADRATIC:
@@ -25,8 +25,17 @@ else:
     optimal_years = 100
     optimal_N = 20
 
+if QUADRATIC:
+    display_years = int(cell(1, 3))
+    display_N = display_years // 5
+else:
+    display_years = optimal_years
+    display_N = optimal_N
+
 
 print(f"Using data set number: {dataset_num=}")
+print(f"Using target population: {target_population=}")
+print(f"Using optimal years: {optimal_years=}, display years: {display_years=}")
 
 initial_data = np.array(
     [
@@ -95,7 +104,7 @@ def L(
     return ret
 
 
-def get_p_n(L, *args, N=20, eradication=0) -> float:
+def get_p_n(L, *args, N=display_N, eradication=0) -> float:
     assert eradication >= 0 and eradication <= 1
     L_n = linalg.matrix_power(L, N)
     P_n = np.matmul(L_n, initial)
@@ -103,8 +112,7 @@ def get_p_n(L, *args, N=20, eradication=0) -> float:
     return np.sum(P_n) * e
 
 
-def get_ps_n(L, N=20, eradication: float = 0.0):
-    """0 - 20, len() == 21"""
+def get_ps_n(L, N=display_N, eradication: float = 0.0):
     assert eradication >= 0 and eradication <= 1
     ret = []
     for i in range(N + 1):
@@ -306,7 +314,7 @@ def write_cull_rates_to_csv(
     deviation=0.05,
     step=0.01,
     file_name: str = "cull_rates.csv",
-    N=20,
+    N=display_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ):
@@ -336,7 +344,7 @@ def write_birth_controls_to_csv(
     deviation=0.05,
     step=0.01,
     file_name: str = "birth_controls.csv",
-    N=20,
+    N=display_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ):
@@ -366,7 +374,7 @@ def write_eradication_rates_to_csv(
     deviation=0.05,
     step=0.01,
     file_name: str = "eradication_rates.csv",
-    N=20,
+    N=display_N,
     survival_rates=survival_rates,
     birth_rates=birth_rates,
 ):
@@ -402,68 +410,68 @@ cull_rates_no_cull = write_cull_rates_to_csv(
     text="No cull",
 )
 
-# Figure 5
-optimal_cull = find_optimal_cull()
-print(f"{optimal_cull=}")
-cull_rates_optimum = write_cull_rates_to_csv(
-    median=optimal_cull[1],
-    file_name=f"cull_rates_optimum.csv",
-    text=optimal_cull[0],
-)
-# Figure 6
-stable_cull = find_stable_cull()
-print(f"{stable_cull=}")
-cull_rates_stable = write_cull_rates_to_csv(
-    text=stable_cull[0],
-    median=stable_cull[1],
-    file_name="cull_rates_stable.csv",
-)
+# # Figure 5
+# optimal_cull = find_optimal_cull()
+# print(f"{optimal_cull=}")
+# cull_rates_optimum = write_cull_rates_to_csv(
+#     median=optimal_cull[1],
+#     file_name=f"cull_rates_optimum.csv",
+#     text=optimal_cull[0],
+# )
+# # Figure 6
+# stable_cull = find_stable_cull()
+# print(f"{stable_cull=}")
+# cull_rates_stable = write_cull_rates_to_csv(
+#     text=stable_cull[0],
+#     median=stable_cull[1],
+#     file_name="cull_rates_stable.csv",
+# )
 
-# Figure 7
-optimal_eradication = find_optimal_eradication()
-print(f"{optimal_eradication=}")
-eradication_rates_optimal = write_eradication_rates_to_csv(
-    text=optimal_eradication[0],
-    median=optimal_eradication[1],
-    file_name="eradication_rates_optimum.csv",
-)
+# # Figure 7
+# optimal_eradication = find_optimal_eradication()
+# print(f"{optimal_eradication=}")
+# eradication_rates_optimal = write_eradication_rates_to_csv(
+#     text=optimal_eradication[0],
+#     median=optimal_eradication[1],
+#     file_name="eradication_rates_optimum.csv",
+# )
 
-# Figure 8
-stable_eradication = find_stable_eradication()
-print(f"{stable_eradication=}")
-eradication_rates_stable = write_eradication_rates_to_csv(
-    text=stable_eradication[0],
-    median=stable_eradication[1],
-    file_name="eradication_rates_stable.csv",
-)
+# # Figure 8
+# stable_eradication = find_stable_eradication()
+# print(f"{stable_eradication=}")
+# eradication_rates_stable = write_eradication_rates_to_csv(
+#     text=stable_eradication[0],
+#     median=stable_eradication[1],
+#     file_name="eradication_rates_stable.csv",
+# )
 
-# Figure 9
-optimal_birth_control = find_optimal_birth_control()
-print(f"{optimal_birth_control=}")
-birth_control_rates_optimal = write_birth_controls_to_csv(
-    text=optimal_birth_control[0],
-    median=optimal_birth_control[1],
-    file_name="birth_controls_optimum.csv",
-)
+# # Figure 9
+# optimal_birth_control = find_optimal_birth_control()
+# print(f"{optimal_birth_control=}")
+# birth_control_rates_optimal = write_birth_controls_to_csv(
+#     text=optimal_birth_control[0],
+#     median=optimal_birth_control[1],
+#     file_name="birth_controls_optimum.csv",
+# )
 
-# Figure 10
-stable_birth_control = find_stable_birth_control()
-print(f"{stable_birth_control=}")
-birth_control_rates_stable = write_birth_controls_to_csv(
-    text=stable_birth_control[0],
-    median=stable_birth_control[1],
-    file_name="birth_controls_stable.csv",
-)
+# # Figure 10
+# stable_birth_control = find_stable_birth_control()
+# print(f"{stable_birth_control=}")
+# birth_control_rates_stable = write_birth_controls_to_csv(
+#     text=stable_birth_control[0],
+#     median=stable_birth_control[1],
+#     file_name="birth_controls_stable.csv",
+# )
 
-# Figure 11
-write_cull_rates_to_csv(
-    median=1, deviation=0, file_name="max_cull_rates.csv", text="Max cull"
-)
-write_eradication_rates_to_csv(
-    median=1,
-    deviation=0,
-    file_name="max_eradication_rates.csv",
-    text="Max eradication",
-)
+# # Figure 11
+# write_cull_rates_to_csv(
+#     median=1, deviation=0, file_name="max_cull_rates.csv", text="Max cull"
+# )
+# write_eradication_rates_to_csv(
+#     median=1,
+#     deviation=0,
+#     file_name="max_eradication_rates.csv",
+#     text="Max eradication",
+# )
 
-eradication_rates_stable
+cull_rates_no_cull
