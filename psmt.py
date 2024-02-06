@@ -9,17 +9,17 @@ if QUADRATIC:
     import sys
 
 if QUADRATIC:
-    dataset_num = cell(1, 0)
+    dataset_num = int(cell(1, 0))
 else:
     dataset_num = int([*sys.argv, 14][1])
 
 if QUADRATIC:
-    target_population = cell(1, 1)
+    target_population = float(cell(1, 1))
 else:
     target_population = 50
 
 if QUADRATIC:
-    optimal_years = cell(1, 2)
+    optimal_years = int(cell(1, 2))
     optimal_N = optimal_years // 5
 else:
     optimal_years = 100
@@ -466,4 +466,4 @@ write_eradication_rates_to_csv(
     text="Max eradication",
 )
 
-cull_rates_optimum
+eradication_rates_stable
