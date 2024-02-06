@@ -104,7 +104,7 @@ def L(
     return ret
 
 
-def get_p_n(L, *args, N=display_N, eradication=0) -> float:
+def get_p_n(L, *args, N, eradication=0) -> float:
     assert eradication >= 0 and eradication <= 1
     L_n = linalg.matrix_power(L, N)
     P_n = np.matmul(L_n, initial)
@@ -112,7 +112,7 @@ def get_p_n(L, *args, N=display_N, eradication=0) -> float:
     return np.sum(P_n) * e
 
 
-def get_ps_n(L, N=display_N, eradication: float = 0.0):
+def get_ps_n(L, *args, N, eradication: float = 0.0):
     assert eradication >= 0 and eradication <= 1
     ret = []
     for i in range(N + 1):
@@ -136,7 +136,7 @@ def find_optimal_cull(
         L_culled = L(
             culling_rate=c, survival_rates=survival_rates, birth_rates=birth_rates
         )
-        P_n = get_p_n(L_culled, N)
+        P_n = get_p_n(L_culled, N=N)
         if P_n < target_population:
             print(f"Optimal cull results: {P_n=}, {c=}")
             result = f"The optimal cull to reach a target population of {target_population} thousand is {c} ± {accuracy}. This reached a population of {P_n} thousand after {N} iterations = after {N * 5} years."
@@ -253,7 +253,7 @@ def find_optimal_birth_control(
         L_modified = L(
             birth_control=b, survival_rates=survival_rates, birth_rates=birth_rates
         )
-        P_n = get_p_n(L_modified, N)
+        P_n = get_p_n(L_modified, N=N)
         if P_n <= target_population:
             print(f"Optimal Birth Control result: {P_n=}, {b=}")
             result = f"The optimal birth control rate to reach a target population of {target_population} thousand is {b} ± {accuracy}. This reached a population of {P_n} thousand after {N} iterations = after {N * 5} years."
@@ -327,7 +327,7 @@ def write_cull_rates_to_csv(
         L_culled = L(
             culling_rate=c, survival_rates=survival_rates, birth_rates=birth_rates
         )
-        Ps_n = get_ps_n(L_culled, N)
+        Ps_n = get_ps_n(L_culled, N=N)
         results.append([c, *Ps_n])
 
     columns = ["Cull Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
@@ -357,7 +357,7 @@ def write_birth_controls_to_csv(
         L_modified = L(
             birth_control=b, survival_rates=survival_rates, birth_rates=birth_rates
         )
-        Ps_n = get_ps_n(L_modified, N)
+        Ps_n = get_ps_n(L_modified, N=N)
         results.append([b, *Ps_n])
 
     columns = ["Birth Control Rate", *map(lambda n: 5 * n, list(range(N + 1)))]
@@ -402,13 +402,13 @@ def write_initial_population_vector_to_csv(
     df.to_csv("initial_population_vector.csv", index=False)
 
 
-# Figure 4
-cull_rates_no_cull = write_cull_rates_to_csv(
-    median=0,
-    deviation=0,
-    file_name="cull_rates_no_cull.csv",
-    text="No cull",
-)
+# # Figure 4
+# cull_rates_no_cull = write_cull_rates_to_csv(
+#     median=0,
+#     deviation=0,
+#     file_name="cull_rates_no_cull.csv",
+#     text="No cull",
+# )
 
 # # Figure 5
 # optimal_cull = find_optimal_cull()
@@ -436,14 +436,14 @@ cull_rates_no_cull = write_cull_rates_to_csv(
 #     file_name="eradication_rates_optimum.csv",
 # )
 
-# # Figure 8
-# stable_eradication = find_stable_eradication()
-# print(f"{stable_eradication=}")
-# eradication_rates_stable = write_eradication_rates_to_csv(
-#     text=stable_eradication[0],
-#     median=stable_eradication[1],
-#     file_name="eradication_rates_stable.csv",
-# )
+# Figure 8
+stable_eradication = find_stable_eradication()
+print(f"{stable_eradication=}")
+eradication_rates_stable = write_eradication_rates_to_csv(
+    text=stable_eradication[0],
+    median=stable_eradication[1],
+    file_name="eradication_rates_stable.csv",
+)
 
 # # Figure 9
 # optimal_birth_control = find_optimal_birth_control()
@@ -474,4 +474,5 @@ cull_rates_no_cull = write_cull_rates_to_csv(
 #     text="Max eradication",
 # )
 
-cull_rates_no_cull
+
+eradication_rates_stable
