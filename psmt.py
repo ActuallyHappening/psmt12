@@ -402,7 +402,7 @@ def write_initial_population_vector_to_csv(
     df.to_csv("initial_population_vector.csv", index=False)
 
 
-# Figure 4
+# Figure 2
 cull_rates_no_cull = write_cull_rates_to_csv(
     median=0,
     deviation=0,
@@ -410,7 +410,7 @@ cull_rates_no_cull = write_cull_rates_to_csv(
     text="No cull",
 )
 
-# Figure 5
+# Figure 3
 optimal_cull = find_optimal_cull()
 print(f"{optimal_cull=}")
 cull_rates_optimum = write_cull_rates_to_csv(
@@ -418,7 +418,7 @@ cull_rates_optimum = write_cull_rates_to_csv(
     file_name=f"cull_rates_optimum.csv",
     text=optimal_cull[0],
 )
-# Figure 6
+# Figure 4
 stable_cull = find_stable_cull()
 print(f"{stable_cull=}")
 cull_rates_stable = write_cull_rates_to_csv(
@@ -427,7 +427,7 @@ cull_rates_stable = write_cull_rates_to_csv(
     file_name="cull_rates_stable.csv",
 )
 
-# Figure 7
+# Figure 5
 optimal_eradication = find_optimal_eradication()
 print(f"{optimal_eradication=}")
 eradication_rates_optimal = write_eradication_rates_to_csv(
@@ -436,7 +436,7 @@ eradication_rates_optimal = write_eradication_rates_to_csv(
     file_name="eradication_rates_optimum.csv",
 )
 
-# Figure 8
+# Figure 6
 stable_eradication = find_stable_eradication()
 print(f"{stable_eradication=}")
 eradication_rates_stable = write_eradication_rates_to_csv(
@@ -445,7 +445,7 @@ eradication_rates_stable = write_eradication_rates_to_csv(
     file_name="eradication_rates_stable.csv",
 )
 
-# Figure 9
+# Figure 7
 optimal_birth_control = find_optimal_birth_control()
 print(f"{optimal_birth_control=}")
 birth_control_rates_optimal = write_birth_controls_to_csv(
@@ -454,7 +454,7 @@ birth_control_rates_optimal = write_birth_controls_to_csv(
     file_name="birth_controls_optimum.csv",
 )
 
-# Figure 10
+# Figure 8
 stable_birth_control = find_stable_birth_control()
 print(f"{stable_birth_control=}")
 birth_control_rates_stable = write_birth_controls_to_csv(
@@ -463,7 +463,7 @@ birth_control_rates_stable = write_birth_controls_to_csv(
     file_name="birth_controls_stable.csv",
 )
 
-# Figure 11
+# Figure 9
 write_cull_rates_to_csv(
     median=1, deviation=0, file_name="max_cull_rates.csv", text="Max cull"
 )
